@@ -12,8 +12,7 @@ The full pipeline is implemented and verified end to end locally.
 | Topic classification | ✅ Done | 4 lanes, word-boundary keyword matching |
 | Relevance ranking | ✅ Done | keywords + personal-stack boosts + popularity/freshness |
 | Free summarization | ✅ Done | extractive (default) + optional local Ollama |
-| LinkedIn angle hooks | ✅ Done | per-item content framing |
-| LinkedIn autoposter handoff | ✅ Done | writes `feed/linkedin-feed.json` in TopicSuggestion shape |
+| LinkedIn angle hooks | ✅ Done | per-item content framing (shown in digest) |
 | Dedupe / seen state | ✅ Done | persistent JSON, verified across runs |
 | Telegram delivery | ✅ Done | optional; graceful skip when unconfigured; `.env` auto-loaded via python-dotenv |
 | Markdown archive | ✅ Done | dated, Obsidian-ready |

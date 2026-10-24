@@ -17,14 +17,16 @@ effort. Nothing here is required for the current MVP to work — it's all
   `config.py` into an editable data file so non-developers can tune it.
 - [ ] **`--topic` CLI filter** — run the digest for a single lane on demand.
 
-## ✅ Recently shipped
-
-- [x] **Direct LinkedIn autoposter handoff** — each run writes
-  `feed/linkedin-feed.json` in the autoposter's `TopicSuggestion` shape
-  (topic, category, angle, trending_context, source_articles). See the README
-  "LinkedIn autoposter handoff" section.
-
 ## 🧭 Medium-term
+
+- [ ] **Analytics-driven ranking (the only integration worth doing)** — if the
+  companion `linkedin-autoposter` project's engagement data proves useful, feed
+  "which topics performed" back into `CONTEXT_BOOSTS` so the digest learns what
+  the audience responds to. This flows **analytics → digest only**. A direct
+  content handoff was built and then intentionally removed: the autoposter is a
+  deliberately dumb queue poster, and post writing is a human + Claude step, so
+  machine-drafted posts would lower quality rather than add leverage. The digest
+  informs you; you and Claude write.
 - [ ] **Notion delivery** — optional push to a Notion database in addition to the
   Markdown archive (free Notion API).
 - [ ] **Obsidian daily-note integration** — append to an existing vault note

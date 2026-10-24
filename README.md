@@ -95,62 +95,8 @@ be triggered manually. To enable Telegram in CI, add two repo secrets:
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
-The workflow commits the updated `state/seen.json`, the new `archive/*.md`, and
-`feed/linkedin-feed.json` back to the repo so dedupe persists and your archive
-builds up over time.
-
-## LinkedIn autoposter handoff
-
-Each run writes `feed/linkedin-feed.json` — a ranked, de-duplicated set of
-content suggestions in the exact `TopicSuggestion` shape used by the companion
-[`linkedin-autoposter`](https://github.com/phani4393/linkedin-autoposter)
-project:
-
-```json
-{
-  "generated_at": "...",
-  "source": "devops-digest",
-  "count": 9,
-  "suggestions": [
-    {
-      "topic": "supply-chain-security",
-      "category": "cybersecurity",
-      "angle": "Security teams: here's what this means for your threat model.",
-      "trending_context": "Recent news context:\n- <title> (<source>)\n<summary>",
-      "source_articles": ["https://..."]
-    }
-  ]
-}
-```
-
-- Our four lanes map to the autoposter's three categories
-  (`cybersecurity` / `artificial-intelligence` / `devsecops`); the SRE lane is
-  folded into `devsecops`.
-- Topic slugs mirror the autoposter's keyword mappings
-  (`llm-security`, `cicd-security`, `infrastructure-as-code`, ...).
-- The per-item `angle` reuses the digest's LinkedIn hook.
-
-**To consume it from the autoposter**, point its topic research at this file
-instead of re-scraping RSS. A minimal reader (drop into the autoposter and call
-it from `generate_content.py`):
-
-```python
-import json
-from topic_researcher import TopicSuggestion
-
-def load_digest_feed(path="../devops-digest/feed/linkedin-feed.json"):
-    data = json.load(open(path, encoding="utf-8"))
-    return [
-        TopicSuggestion(
-            topic=s["topic"], category=s["category"], angle=s["angle"],
-            trending_context=s["trending_context"],
-            source_articles=s["source_articles"],
-        )
-        for s in data["suggestions"]
-    ]
-```
-
-Disable the export with `DD_LINKEDIN_FEED=false`.
+The workflow commits the updated `state/seen.json` and the new `archive/*.md`
+back to the repo so dedupe persists and your archive builds up over time.
 
 ## Configuration
 
@@ -165,8 +111,6 @@ Everything is tunable via environment variables (see `.env.example` and
 | `DD_LOOKBACK_HOURS` | `168` | how far back to consider (1 week) |
 | `DD_MIN_RELEVANCE` | `1.0` | minimum score to include |
 | `DD_ARCHIVE_DIR` | `archive` | where Markdown archives are written |
-| `DD_LINKEDIN_FEED` | `true` | write `feed/linkedin-feed.json` for the autoposter |
-| `DD_LINKEDIN_FEED_DIR` | `feed` | where the LinkedIn feed is written |
 
 ### Customizing topics & sources
 

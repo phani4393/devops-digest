@@ -191,10 +191,5 @@ ARCHIVE_DIR: str = os.getenv("DD_ARCHIVE_DIR", "archive")
 # JSON file tracking already-seen article IDs so stories don't repeat.
 SEEN_STATE_FILE: str = os.getenv("DD_SEEN_STATE_FILE", "state/seen.json")
 
-# LinkedIn autoposter handoff: write a JSON feed of ranked items in the
-# autoposter's TopicSuggestion shape. Set DD_LINKEDIN_FEED=false to disable.
-LINKEDIN_FEED_ENABLED: bool = os.getenv("DD_LINKEDIN_FEED", "true").lower() == "true"
-LINKEDIN_FEED_DIR: str = os.getenv("DD_LINKEDIN_FEED_DIR", "feed")
-
 # How many days of "seen" history to retain before pruning.
 SEEN_RETENTION_DAYS: int = int(os.getenv("DD_SEEN_RETENTION_DAYS", "45"))
