@@ -63,7 +63,16 @@ python -m src.digest
 
 1. Message [@BotFather](https://t.me/BotFather) → `/newbot` → copy the token.
 2. Message [@userinfobot](https://t.me/userinfobot) → copy your chat ID.
-3. Copy `.env.example` to `.env` and fill both in (or export them as env vars).
+3. Also send your new bot a message once (a bot can't DM you until you've
+   started it).
+4. Copy `.env.example` to `.env` and fill both values in:
+   ```
+   TELEGRAM_BOT_TOKEN=8123456789:AAH...
+   TELEGRAM_CHAT_ID=123456789
+   ```
+   `.env` is git-ignored and loaded automatically on each run (via
+   `python-dotenv`), so a plain `python -m src.digest` picks it up — no manual
+   exports needed. You can still set the variables in your shell if you prefer.
 
 ### Optional: local Ollama summaries (still free)
 

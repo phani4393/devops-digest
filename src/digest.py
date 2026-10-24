@@ -18,6 +18,15 @@ import argparse
 import sys
 from typing import Dict, List
 
+# Load a local .env (if present) so TELEGRAM_* and DD_* vars are available
+# without manual exports. Does nothing in CI where secrets are real env vars.
+try:  # pragma: no cover - optional dependency / optional file
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
+
 # Ensure emoji/unicode in the digest print cleanly on any console (Windows
 # defaults to cp1252, which can't encode the topic emoji).
 try:  # pragma: no cover - environment dependent

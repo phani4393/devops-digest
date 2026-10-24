@@ -14,7 +14,7 @@ The full pipeline is implemented and verified end to end locally.
 | Free summarization | ✅ Done | extractive (default) + optional local Ollama |
 | LinkedIn angle hooks | ✅ Done | per-item content framing |
 | Dedupe / seen state | ✅ Done | persistent JSON, verified across runs |
-| Telegram delivery | ✅ Done | optional; graceful skip when unconfigured |
+| Telegram delivery | ✅ Done | optional; graceful skip when unconfigured; `.env` auto-loaded via python-dotenv |
 | Markdown archive | ✅ Done | dated, Obsidian-ready |
 | GitHub Actions cron | ✅ Done | weekly Sunday 7PM CT + manual trigger |
 | Documentation | ✅ Done | README, FAQ, STATUS, ROADMAP |
