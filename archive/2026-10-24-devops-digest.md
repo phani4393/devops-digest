@@ -1,7 +1,7 @@
 # DevOps Digest — 2026-10-24
 
 > Cybersecurity · AI News & Tools · DevSecOps · SRE
-> Generated 2026-10-24 03:09 UTC
+> Generated 2026-10-24 03:16 UTC
 
 ## 🛡️ Cybersecurity
 
@@ -42,7 +42,7 @@ CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV
 <sub>matched: cisa, cve-, vulnerabilities, vulnerability</sub>
 
 ### 5. [LiteLLM Compromised in Supply Chain Attack Delivering Credential Stealer and Backdoor](https://thehackernews.com/2026/10/litellm-compromised-in-supply-chain.html)
-*The Hacker News* · 2026-10-21
+*The Hacker News* · 2026-10-22
 
 The popular LiteLLM Python package has been compromised as part of a software supply chain attack that delivered a credential stealer and a backdoor, according to reports from SafeDep, Socket, StepSecurity, and Upwind. The Python package has since been quarantined on Python Package Index (PyPI), and the
 
@@ -53,7 +53,7 @@ The popular LiteLLM Python package has been compromised as part of a software su
 ## 🤖 AI News & Tools
 
 ### 1. [Donating Agent Skills to the Agentic AI Foundation](https://simonwillison.net/2026/Oct/22/donating-agent-skills/)
-*Simon Willison* · 2026-10-22
+*Simon Willison* · 2026-10-23
 
 Donating Agent Skills to the Agentic AI Foundation News today from Anthropic: We’re committed to keeping Agent Skills open, community-driven, and vendor-neutral. Tags: standards , ai , generative-ai , llms , anthropic , model-context-protocol , skills
 
@@ -89,7 +89,7 @@ OpenAI has revealed that two artificial intelligence (AI) agents powered by GPT-
 <sub>matched: agent, gpt, incident, openai</sub>
 
 ### 5. [Managed RAG search inside the sovereign perimeter: Gemini on GDC enterprise search](https://cloud.google.com/blog/topics/hybrid-cloud/managed-rag-search-inside-the-sovereign-perimeter-gemini-on-gdc-enterprise-search/)
-*Google Cloud Blog* · 2026-10-20
+*Google Cloud Blog* · 2026-10-21
 
 Search and multimodal intelligence that’s available in the public cloud can help teams manage and analyze that data, but due to strict data sovereignty mandates, that data cannot leave the customer premises. Your teams can now upload
 
@@ -129,12 +129,14 @@ October 20, 2026: This post was republished to reflect the new migration capabil
 
 **LinkedIn angle:** Directly relevant to AWS work — a strong hook for a post tying this to real-world AWS experience.
 
-### 5. [AI jobs are waiting while GPUs sit idle. Kubernetes has a new plan.](https://thenewstack.io/kubernetes-agentic-ai-inference/)
-*The New Stack* · 2026-10-23
+### 5. [Suggestions for Having Lower vs Prod in DAST tools](https://www.reddit.com/r/cybersecurity/comments/1xdu2dc/suggestions_for_having_lower_vs_prod_in_dast_tools/)
+*r/cybersecurity* · 2026-10-24
 
-Kubernetes has a new plan. appeared first on The New Stack .
+We are a HITRUST regulated environment. I m mostly cleaning up the licenses that our DAST tool has , The previous engineer onboarded both Prod and Dev version of the App (which is internally accessible) into DAST tool.
 
 **LinkedIn angle:** Supply-chain and IaC security keep maturing. Here's the practical angle.
+
+<sub>matched: dast</sub>
 
 ## 📈 SRE / Reliability
 

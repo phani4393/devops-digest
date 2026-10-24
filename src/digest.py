@@ -36,7 +36,7 @@ except (AttributeError, ValueError):
     pass
 
 from . import config, state
-from .delivery import archive, formatter
+from .delivery import archive, formatter, linkedin_feed
 from .delivery.telegram_bot import TelegramBot
 from .models import Article
 from .processors import filter_rank, linkedin_angle, summarizer
@@ -95,6 +95,10 @@ def deliver(by_topic: Dict[str, List[Article]], dry_run: bool = False) -> None:
     markdown = formatter.build_markdown(by_topic)
     archive_path = archive.write_archive(markdown)
     print(f"Archive written: {archive_path}")
+
+    if config.LINKEDIN_FEED_ENABLED and selected:
+        feed_path = linkedin_feed.write_linkedin_feed(by_topic)
+        print(f"LinkedIn feed written: {feed_path}")
 
     messages = formatter.build_telegram_messages(by_topic)
 

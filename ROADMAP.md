@@ -17,10 +17,14 @@ effort. Nothing here is required for the current MVP to work — it's all
   `config.py` into an editable data file so non-developers can tune it.
 - [ ] **`--topic` CLI filter** — run the digest for a single lane on demand.
 
-## 🧭 Medium-term
+## ✅ Recently shipped
 
-- [ ] **Direct LinkedIn autoposter handoff** — emit a structured JSON payload the
-  existing `linkedin-autoposter` project can consume (title, url, angle, draft).
+- [x] **Direct LinkedIn autoposter handoff** — each run writes
+  `feed/linkedin-feed.json` in the autoposter's `TopicSuggestion` shape
+  (topic, category, angle, trending_context, source_articles). See the README
+  "LinkedIn autoposter handoff" section.
+
+## 🧭 Medium-term
 - [ ] **Notion delivery** — optional push to a Notion database in addition to the
   Markdown archive (free Notion API).
 - [ ] **Obsidian daily-note integration** — append to an existing vault note
