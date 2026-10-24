@@ -1,0 +1,58 @@
+name: Weekly DevOps Digest
+
+on:
+  schedule:
+    # Sunday 7:00 PM CT. CDT is UTC-5, so 00:00 UTC Monday.
+    - cron: '0 0 * * 1'
+  workflow_dispatch:  # allow manual trigger
+
+permissions:
+  contents: write  # needed to commit the seen-state and archive back to the repo
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run DevOps Digest
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Optional overrides can be set as repo variables, e.g.:
+          # DD_MAX_PER_TOPIC: ${{ vars.DD_MAX_PER_TOPIC }}
+        run: python -m src.digest
+
+      - name: Commit updated state and archive
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state/ archive/ || true
+          if git diff --staged --quiet; then
+            echo "No digest changes to commit."
+          else
+            git commit -m "digest: weekly run $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Report status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Weekly digest completed"
+          else
+            echo "❌ Weekly digest failed"
+          fi

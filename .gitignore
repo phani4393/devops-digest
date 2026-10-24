@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets
+.env
+
+# Keep the state and archive directories tracked (the Action commits them),
+# but ignore local scratch files.
+*.log
