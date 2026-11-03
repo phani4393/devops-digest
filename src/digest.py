@@ -39,7 +39,7 @@ from . import config, state
 from .delivery import archive, formatter
 from .delivery.telegram_bot import TelegramBot
 from .models import Article
-from .processors import filter_rank, linkedin_angle, summarizer
+from .processors import filter_rank, linkedin_angle, summarizer, why_it_matters
 from .sources.hackernews import fetch_hackernews
 from .sources.rss import fetch_all_rss, fetch_reddit
 
@@ -84,6 +84,7 @@ def build_digest(dry_run: bool = False) -> Dict[str, List[Article]]:
     if selected:
         print(f"Summarizing with backend: {config.SUMMARIZER}")
         summarizer.summarize_all(selected)
+        why_it_matters.generate_all(selected)
         linkedin_angle.generate_all(selected)
 
     return by_topic

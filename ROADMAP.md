@@ -11,11 +11,20 @@ effort. Nothing here is required for the current MVP to work — it's all
   RSS excerpt. Biggest single quality win.
 - [ ] **Per-topic source weighting** — let each lane prefer certain feeds (e.g.
   SRE should lean on Grafana/Datadog over generic Reddit).
-- [ ] **De-duplicate near-identical stories** — the same CVE/story often appears
+- [x] **De-duplicate near-identical stories** — the same CVE/story often appears
   across multiple feeds; cluster by title similarity and keep the best copy.
+  Done: `filter_rank.dedupe_near_identical` collapses titles with ≥0.6 Jaccard
+  overlap before the top-N cut, so duplicates no longer consume lane slots.
 - [ ] **Config via YAML/TOML file** — move topics/sources/keywords out of
   `config.py` into an editable data file so non-developers can tune it.
 - [ ] **`--topic` CLI filter** — run the digest for a single lane on demand.
+- [x] **"Why it matters" impact line** — each item now carries a one-line
+  practical "so what" (`processors/why_it_matters.py`), deterministic by
+  default with an optional Ollama path. Shown in both the Telegram message and
+  the markdown archive.
+- [x] **Act / watch / FYI triage tags** — each item is tagged with a
+  scan-priority badge (🔴 ACT / 🟡 WATCH / ⚪ FYI) derived from stack-boost and
+  urgency signals, so a time-pressed reader can skim top-to-bottom.
 
 ## 🧭 Medium-term
 
@@ -35,8 +44,9 @@ effort. Nothing here is required for the current MVP to work — it's all
   components in a `--debug` output to make tuning easier.
 - [ ] **More sources** — GitHub Trending (by topic/language), Lobsters, dev.to
   tags, official AWS/Terraform/Salesforce release feeds.
-- [ ] **Sentiment / "why it matters" line** — a one-liner per item explaining the
-  practical impact (free/local model).
+- [x] **Sentiment / "why it matters" line** — done (see near-term section):
+  a one-liner per item explaining the practical impact (deterministic by
+  default, optional free/local Ollama model).
 
 ## 🌟 Longer-term / nice-to-have
 

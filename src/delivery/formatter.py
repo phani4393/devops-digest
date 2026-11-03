@@ -11,6 +11,17 @@ from ..models import Article
 # Telegram hard-limits a message at 4096 chars; stay well under to be safe.
 _TELEGRAM_LIMIT = 3800
 
+# Scan-priority badges for the triage tag.
+_TRIAGE_BADGE = {
+    "act": "🔴 ACT",
+    "watch": "🟡 WATCH",
+    "fyi": "⚪ FYI",
+}
+
+
+def _triage_badge(article: Article) -> str:
+    return _TRIAGE_BADGE.get(article.triage, "")
+
 
 def _escape_md(text: str) -> str:
     """Escape the characters that break Telegram's legacy Markdown."""
@@ -36,12 +47,16 @@ def build_telegram_messages(by_topic: Dict[str, List[Article]]) -> List[str]:
         section = f"\n\n{config.TOPIC_LABELS[topic]}\n" + "━" * 16
         block = section
         for i, art in enumerate(items, 1):
+            badge = _triage_badge(art)
+            badge_prefix = f"{badge} " if badge else ""
             entry = (
-                f"\n\n{i}. [{_escape_md(art.title)}]({art.url})"
+                f"\n\n{badge_prefix}{i}. [{_escape_md(art.title)}]({art.url})"
                 f"\n_{art.source}_"
                 f"\n{_escape_md(art.summary)}"
-                f"\n💡 {_escape_md(art.linkedin_angle)}"
             )
+            if art.why_it_matters:
+                entry += f"\n🎯 _{_escape_md(art.why_it_matters)}_"
+            entry += f"\n💡 {_escape_md(art.linkedin_angle)}"
             # Flush the current message if adding this entry would overflow.
             if len(current) + len(block) + len(entry) > _TELEGRAM_LIMIT:
                 messages.append(current + block)
@@ -75,7 +90,11 @@ def build_markdown(by_topic: Dict[str, List[Article]]) -> str:
         lines.append("")
         for i, art in enumerate(items, 1):
             total += 1
-            lines.append(f"### {i}. [{art.title}]({art.url})")
+            badge = _triage_badge(art)
+            heading = f"### {i}. [{art.title}]({art.url})"
+            if badge:
+                heading = f"### {badge} · {i}. [{art.title}]({art.url})"
+            lines.append(heading)
             meta = f"*{art.source}*"
             if art.published:
                 meta += f" · {art.published.strftime('%Y-%m-%d')}"
@@ -85,6 +104,9 @@ def build_markdown(by_topic: Dict[str, List[Article]]) -> str:
             lines.append("")
             if art.summary:
                 lines.append(art.summary)
+                lines.append("")
+            if art.why_it_matters:
+                lines.append(f"**🎯 Why it matters:** {art.why_it_matters}")
                 lines.append("")
             lines.append(f"**LinkedIn angle:** {art.linkedin_angle}")
             if art.matched_terms:

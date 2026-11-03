@@ -25,6 +25,8 @@ class Article:
     relevance: float = 0.0         # ranking score
     summary: str = ""              # generated (extractive/ollama) summary
     linkedin_angle: str = ""       # content hook for the autoposter
+    why_it_matters: str = ""       # one-line practical impact for a busy reader
+    triage: str = ""               # "act" | "watch" | "fyi" scan-priority tag
     matched_terms: List[str] = field(default_factory=list)
 
     @property

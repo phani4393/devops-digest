@@ -11,7 +11,10 @@ The full pipeline is implemented and verified end to end locally.
 | Source fetching | ✅ Done | Hacker News API, vendor/news RSS, Reddit `.rss` |
 | Topic classification | ✅ Done | 4 lanes, word-boundary keyword matching |
 | Relevance ranking | ✅ Done | keywords + personal-stack boosts + popularity/freshness |
+| Near-duplicate dedupe | ✅ Done | title-similarity clustering before top-N (≥0.6 Jaccard) |
 | Free summarization | ✅ Done | extractive (default) + optional local Ollama |
+| "Why it matters" line | ✅ Done | per-item impact note; deterministic + optional Ollama |
+| Triage tags | ✅ Done | 🔴 ACT / 🟡 WATCH / ⚪ FYI scan-priority per item |
 | LinkedIn angle hooks | ✅ Done | per-item content framing (shown in digest) |
 | Dedupe / seen state | ✅ Done | persistent JSON, verified across runs |
 | Telegram delivery | ✅ Done | optional; graceful skip when unconfigured; `.env` auto-loaded via python-dotenv |

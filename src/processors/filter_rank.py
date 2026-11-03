@@ -123,8 +123,75 @@ def _source_topics(source_name: str) -> List[str]:
     return []
 
 
+# ---------------------------------------------------------------------------
+# Triage tagging (act / watch / fyi)
+# ---------------------------------------------------------------------------
+# A busy reader scans the digest and sorts each item into "do something now",
+# "keep an eye on this", or "nice to know". We derive that cheaply from signals
+# we already compute: items that touch the day-job stack are "act", strong
+# topic matches are "watch", everything else is "fyi".
+def assign_triage(article: Article) -> str:
+    """Classify an article's scan-priority: 'act', 'watch', or 'fyi'."""
+    text = article.text
+    # Touches the actual day-job stack -> act on it.
+    if any(_contains(text, term) for term in config.CONTEXT_BOOSTS):
+        return "act"
+    # Actively exploited / urgent security signals -> act.
+    for urgent in ("cisa", "zero-day", "zero day", "actively exploited",
+                   "known exploited", "patch now", "ransomware"):
+        if _contains(text, urgent):
+            return "act"
+    # A solid topic match (more than a bare source-prior) -> watch.
+    if len(article.matched_terms) >= 2:
+        return "watch"
+    return "fyi"
+
+
+# ---------------------------------------------------------------------------
+# Near-duplicate clustering
+# ---------------------------------------------------------------------------
+_TITLE_NOISE = re.compile(r"[^a-z0-9 ]+")
+_TITLE_STOP = {
+    "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "with",
+    "as", "at", "by", "is", "are", "new", "how", "why",
+}
+
+
+def _title_tokens(title: str) -> set:
+    cleaned = _TITLE_NOISE.sub(" ", title.lower())
+    return {w for w in cleaned.split() if w and w not in _TITLE_STOP}
+
+
+def _title_similarity(a: str, b: str) -> float:
+    """Jaccard similarity over significant title tokens (0.0–1.0)."""
+    ta, tb = _title_tokens(a), _title_tokens(b)
+    if not ta or not tb:
+        return 0.0
+    inter = len(ta & tb)
+    union = len(ta | tb)
+    return inter / union if union else 0.0
+
+
+# Titles at/above this Jaccard overlap are treated as the same story.
+_DUP_THRESHOLD = 0.6
+
+
+def dedupe_near_identical(articles: List[Article]) -> List[Article]:
+    """Collapse articles whose titles are near-identical, keeping the best copy.
+
+    Operates on an already relevance-sorted list; the first (highest-ranked)
+    representative of each cluster is kept, later duplicates are dropped.
+    """
+    kept: List[Article] = []
+    for art in articles:
+        if any(_title_similarity(art.title, k.title) >= _DUP_THRESHOLD for k in kept):
+            continue
+        kept.append(art)
+    return kept
+
+
 def select_per_topic(articles: List[Article]) -> Dict[str, List[Article]]:
-    """Filter by lookback + min relevance, then take top-N per topic lane."""
+    """Filter by lookback + min relevance, dedupe, then take top-N per lane."""
     by_topic: Dict[str, List[Article]] = {t: [] for t in config.TOPICS}
 
     for article in articles:
@@ -137,7 +204,12 @@ def select_per_topic(articles: List[Article]) -> Dict[str, List[Article]]:
         by_topic[article.topic].append(article)
 
     for topic in by_topic:
-        by_topic[topic].sort(key=lambda a: a.relevance, reverse=True)
-        by_topic[topic] = by_topic[topic][: config.MAX_PER_TOPIC]
+        ranked = sorted(by_topic[topic], key=lambda a: a.relevance, reverse=True)
+        # Drop near-identical stories *before* taking the top-N so duplicates
+        # don't consume lane slots (e.g. the same CVE from two feeds).
+        ranked = dedupe_near_identical(ranked)
+        for art in ranked:
+            art.triage = assign_triage(art)
+        by_topic[topic] = ranked[: config.MAX_PER_TOPIC]
 
     return by_topic
