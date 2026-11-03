@@ -158,6 +158,27 @@ MAX_PER_TOPIC: int = int(os.getenv("DD_MAX_PER_TOPIC", "5"))
 # Minimum relevance score an item must reach to be included at all.
 MIN_RELEVANCE: float = float(os.getenv("DD_MIN_RELEVANCE", "1.0"))
 
+# ---------------------------------------------------------------------------
+# Triage & dedupe tuning (the knobs behind scan-priority and clustering)
+# ---------------------------------------------------------------------------
+# Titles at/above this Jaccard overlap (0.0–1.0) are treated as the same story
+# and collapsed to the highest-ranked copy. Lower = more aggressive merging.
+DUP_TITLE_THRESHOLD: float = float(os.getenv("DD_DUP_TITLE_THRESHOLD", "0.6"))
+
+# How many topic-keyword matches an item needs to be tagged 🟡 WATCH rather
+# than ⚪ FYI. Raise it to make WATCH rarer (more ends up as FYI).
+TRIAGE_WATCH_MIN_MATCHES: int = int(os.getenv("DD_TRIAGE_WATCH_MIN_MATCHES", "2"))
+
+# Security phrases that force a 🔴 ACT tag regardless of stack match. These are
+# the "drop what you're doing" signals. Comma-separate to override via env.
+_DEFAULT_URGENT = (
+    "cisa,zero-day,zero day,actively exploited,known exploited,patch now,ransomware"
+)
+TRIAGE_URGENT_TERMS: List[str] = [
+    t.strip() for t in os.getenv("DD_TRIAGE_URGENT_TERMS", _DEFAULT_URGENT).split(",")
+    if t.strip()
+]
+
 # Max entries to read from any single feed (some feeds expose thousands of
 # historical items; the lookback filter still applies afterward).
 MAX_ITEMS_PER_FEED: int = int(os.getenv("DD_MAX_ITEMS_PER_FEED", "60"))

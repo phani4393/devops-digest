@@ -111,6 +111,24 @@ Everything is tunable via environment variables (see `.env.example` and
 | `DD_LOOKBACK_HOURS` | `168` | how far back to consider (1 week) |
 | `DD_MIN_RELEVANCE` | `1.0` | minimum score to include |
 | `DD_ARCHIVE_DIR` | `archive` | where Markdown archives are written |
+| `DD_DUP_TITLE_THRESHOLD` | `0.6` | title overlap (0–1) that collapses near-duplicate stories; lower = merge more |
+| `DD_TRIAGE_WATCH_MIN_MATCHES` | `2` | topic-keyword hits needed for 🟡 WATCH instead of ⚪ FYI |
+| `DD_TRIAGE_URGENT_TERMS` | *(see config)* | comma-separated phrases that force 🔴 ACT (e.g. `cisa,zero-day,ransomware`) |
+
+### How items get their scan-priority tag
+
+Each digest item is tagged 🔴 **ACT** / 🟡 **WATCH** / ⚪ **FYI** so you can skim
+top-to-bottom:
+
+- 🔴 **ACT** — touches your day-job stack (anything in `CONTEXT_BOOSTS`:
+  Salesforce, Copado, AWS, Terraform, Datadog, …) **or** matches an urgent
+  security phrase (`DD_TRIAGE_URGENT_TERMS`).
+- 🟡 **WATCH** — a solid topic match (≥ `DD_TRIAGE_WATCH_MIN_MATCHES` keyword hits).
+- ⚪ **FYI** — everything else that still cleared the relevance bar.
+
+All three thresholds are env-tunable, so the defaults are a starting point, not
+a verdict — raise `DD_TRIAGE_WATCH_MIN_MATCHES` if too much lands in WATCH, or
+edit `CONTEXT_BOOSTS` in `src/config.py` to change what counts as "your stack."
 
 ### Customizing topics & sources
 

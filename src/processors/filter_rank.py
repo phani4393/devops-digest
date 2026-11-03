@@ -137,12 +137,10 @@ def assign_triage(article: Article) -> str:
     if any(_contains(text, term) for term in config.CONTEXT_BOOSTS):
         return "act"
     # Actively exploited / urgent security signals -> act.
-    for urgent in ("cisa", "zero-day", "zero day", "actively exploited",
-                   "known exploited", "patch now", "ransomware"):
-        if _contains(text, urgent):
-            return "act"
+    if any(_contains(text, urgent) for urgent in config.TRIAGE_URGENT_TERMS):
+        return "act"
     # A solid topic match (more than a bare source-prior) -> watch.
-    if len(article.matched_terms) >= 2:
+    if len(article.matched_terms) >= config.TRIAGE_WATCH_MIN_MATCHES:
         return "watch"
     return "fyi"
 
@@ -172,19 +170,17 @@ def _title_similarity(a: str, b: str) -> float:
     return inter / union if union else 0.0
 
 
-# Titles at/above this Jaccard overlap are treated as the same story.
-_DUP_THRESHOLD = 0.6
-
-
 def dedupe_near_identical(articles: List[Article]) -> List[Article]:
     """Collapse articles whose titles are near-identical, keeping the best copy.
 
     Operates on an already relevance-sorted list; the first (highest-ranked)
-    representative of each cluster is kept, later duplicates are dropped.
+    representative of each cluster is kept, later duplicates are dropped. The
+    overlap threshold is tunable via DD_DUP_TITLE_THRESHOLD.
     """
+    threshold = config.DUP_TITLE_THRESHOLD
     kept: List[Article] = []
     for art in articles:
-        if any(_title_similarity(art.title, k.title) >= _DUP_THRESHOLD for k in kept):
+        if any(_title_similarity(art.title, k.title) >= threshold for k in kept):
             continue
         kept.append(art)
     return kept
